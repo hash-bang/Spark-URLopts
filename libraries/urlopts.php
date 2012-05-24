@@ -20,13 +20,41 @@ class URLopts {
 	/**
 	* How many segments to ignore
 	* By default the first three segments are ignored which corresponds to the hostname, CodeIgniter controller and Method
+	* @see Ignore()
 	* @var int
 	*/
 	var $_ignore;
 
 	function __construct() {
 		$this->_ignore = 3;
+		$this->_omitserver = 1;
 	}
+
+	/**
+	* When constructing an output URL omit the server name
+	* This will mean that all output URL's use an absolute path relative to the server
+	* @see OmitServer()
+	* @var bool
+	*/
+	var $_omitserver;
+
+	// Convenience Setters {{{
+	/**
+	* Set whether the server should be omitted from the output URL
+	* @param bool $omit Whether the server should be omitted from the output URL
+	*/
+	function OmitServer($omit = TRUE) {
+		$this->_omitserver = $omit;
+	}
+
+	/**
+	* Set the number of URL segments that should be ignored before processing the URL parameters
+	* @param int $ignore The number of segments to ignore
+	*/
+	function Ignore($ignore = 3) {
+		$this->_ignore = $ignore;
+	}
+	// }}}
 
 	/**
 	* Extract an array of parameters from a function arg stack
@@ -57,7 +85,11 @@ class URLopts {
 	* @param string $url The URL to force this module to use
 	*/
 	function Set($url) {
-		$this->_url = rtrim($url, '/');
+		$url = rtrim($url, '/');
+		if (substr($url,0,1) == '/') { // Absolute path omitting the server name
+			$this->_url = (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'server.com') . $url; // Prepend the server or make one up
+		} else 
+			$this->_url = $url;
 	}
 
 	/**
@@ -68,11 +100,18 @@ class URLopts {
 	*/
 	function Segments() {
 		if ($this->_url !== null) {
-			return explode('/', ltrim($this->_url, '/'));
+			return explode('/', $this->_url);
 		} elseif (function_exists('get_instance')) {
 			$CI = get_instance();
-			return $CI->uri->segments;
-		}
+			$segments = $CI->uri->segments;
+			array_unshift($segments, $_SERVER['SERVER_NAME']);
+			return $segments;
+		} elseif (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['SERVER_NAME'])) {
+			$segments = $_SERVER['REQUEST_URI'];
+			array_unshift($segments, $_SERVER['SERVER_NAME']);
+			return $segments;
+		} else
+			trigger_error('urlopts->Segments() - Cant determine the current URI');
 	}
 
 	/**
@@ -104,8 +143,12 @@ class URLopts {
 
 		$doreplace = FALSE;
 		$replacenext = null;
-		foreach ($this->Segments() as $seg) {
-			if (isset($set[$seg])) {
+		foreach ($this->Segments() as $index => $seg) {
+			if ($index == 0) { // First segment - hostname
+				$url = !$this->_omitserver ? $seg . '/' : '/';
+			} elseif ($index < $this->_ignore) {
+				$url .= "$seg/";
+			} elseif (isset($set[$seg])) {
 				$doreplace = TRUE;
 				$replacenext = $set[$seg];
 				if ($replacenext !== FALSE)
@@ -148,7 +191,9 @@ class URLopts {
 		$replaced = 0;
 		$url = '';
 		foreach ($this->Segments() as $index => $seg) {
-			if ($index < $this->_ignore) { // Ignored segment
+			if ($index == 0) { // First segment
+				$url = !$this->_omitserver ? $seg . '/' : '/';
+			} elseif ($index < $this->_ignore) { // Ignored segment
 				$url .= $seg . '/';
 			} elseif ($seg == $param) {
 				$replacenext = 1;
