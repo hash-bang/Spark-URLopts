@@ -90,7 +90,7 @@ class URLopts {
 	function Edit() {
 		$args = func_get_args();
 		$set = array();
-		$url = '/';
+		$url = '';
 		foreach ($args as $arg) {
 			if (substr($arg, 0, 1) == '+') {
 				$set[strtolower(substr($arg, 1))] = 1;
@@ -146,7 +146,7 @@ class URLopts {
 	function Add($param, $value = FALSE) {
 		$replacenext = 0;
 		$replaced = 0;
-		$url = '/';
+		$url = '';
 		foreach ($this->Segments() as $index => $seg) {
 			if ($index < $this->_ignore) { // Ignored segment
 				$url .= $seg . '/';
