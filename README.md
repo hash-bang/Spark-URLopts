@@ -7,8 +7,3 @@ Installation
 Download this repo and copy into your application directory.
 
 Alternatively, install with Sparks.
-
-
-Examples
-========
-
