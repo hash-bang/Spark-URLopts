@@ -19,13 +19,13 @@ class URLopts {
 
 	/**
 	* How many segments to ignore
-	* By default the first two segments are ignored which corresponds to the CodeIgniter controller and Method
+	* By default the first three segments are ignored which corresponds to the hostname, CodeIgniter controller and Method
 	* @var int
 	*/
 	var $_ignore;
 
 	function __construct() {
-		$this->_ignore = 2;
+		$this->_ignore = 3;
 	}
 
 	/**
