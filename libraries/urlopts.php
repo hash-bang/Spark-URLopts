@@ -135,7 +135,7 @@ class URLopts {
 				$set[strtolower(substr($arg, 1))] = 1;
 			} elseif (substr($arg, 0, 1) == '-') {
 				$set[strtolower(substr($arg, 1))] = FALSE;
-			} elseif ($bits = explode('=', $arg, 2)) {
+			} elseif (($bits = explode('=', $arg, 2)) && count($bits) == 2) {
 				$set[strtolower($bits[0])] = $bits[1];
 			} else
 				trigger_error("Unknown call to urlopts->Edit(). Dont know what to do with the string '$arg'. Prefix with '+' to add, '-' to remove to add a '=' to set.");
