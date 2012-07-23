@@ -61,10 +61,13 @@ class URLopts {
 	* This is usually called with $this->urlopts->get(func_get_args());
 	* so /controller/method/filter1/value1/filter2/value2 => array('filter1' => 'value1', 'filter2' => 'value2')
 	* @param null|array $stack The argument stack to process. If no specific stack is specified Segments() is automatically called
+	* @param int $ignore Quick method to call Ignore() before processing the stack
 	*/
-	function Get($stack = null) {
+	function Get($stack = null, $ignore = null) {
 		if ($stack === null)
 			$stack = $this->Segments();
+		if ($ignore)
+			$this->Ignore($ignore);
 		$this->_opts = array();
 		$iskey = 0;
 		foreach ($stack as $index => $item) {
