@@ -16,8 +16,11 @@ Download this repo and copy into your application directory.
 
 Alternatively, install with [Sparks](http://getsparks.org/).
 
-Example
-=======
+Examples
+========
+
+CodeIgniter Controller
+----------------------
 
 Here is a simple User controler which is showing a list of users.
 
@@ -71,3 +74,28 @@ The example CodeIgniter controller would look something like this:
 			$this->load->view('users/footer');
 		}
 	}
+
+
+CodeIgniter Views
+-----------------
+This library also provides ways to return a URL with various options turned off/on.
+
+For example these functions can be placed in your view to return the current URL again with various options set:
+
+	<?=$this->urlopts->Edit('foo=bar')?>
+
+The above sets 'foo' to 'bar' in the URL. If the current URL was 'http://website.com/users/list' the above would return 'http://website.com/users/list/foo/bar'.
+
+	<?=$this->urlopts->Edit('+foo')?>
+
+The above sets 'foo' to '1' in the URL. If the current URL was 'http://website.com/users/list' the above would return 'http://website.com/users/list/foo/1'.
+
+	<?=$this->urlopts->Edit('-foo')?>
+
+The above removes 'foo' from the URL. If the current URL was 'http://website.com/users/list/foo/bar' the above would return 'http://website.com/users/list'.
+
+An alternate syntax is also available:
+
+	<?=$this->urlopts->Add('foo', 'bar')?>
+
+	<?=$this->urlopts->Remove('foo')?>
