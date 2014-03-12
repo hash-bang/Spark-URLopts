@@ -25,9 +25,16 @@ class URLopts {
 	*/
 	var $_ignore;
 
+	/**
+	* Whether to accept $_POST variables when processing arguments (basicly merges the return of Get() with $_POST)
+	* @var bool
+	*/
+	var $_post;
+
 	function __construct() {
 		$this->_ignore = 3;
 		$this->_omitserver = 1;
+		$this->_post = false;
 	}
 
 	/**
@@ -54,6 +61,14 @@ class URLopts {
 	function Ignore($ignore = 3) {
 		$this->_ignore = $ignore;
 	}
+
+	/**
+	* Set whether to merge POST variables with the return of Get()
+	* @param bool $post Turn on the POST variable functionality
+	*/
+	function Post($post = true) {
+		$this->_post = $post;
+	}
 	// }}}
 
 	/**
@@ -79,6 +94,9 @@ class URLopts {
 			} else
 				$this->_opts[$key] = $item;
 		}
+
+		if ($this->_post)
+			$this->_opts = array_merge($this->_opts, $_POST);
 		return $this->_opts;
 	}
 
