@@ -10,6 +10,11 @@ For example the following URL shows the various components of a neatened URL:
 
 URLopts provides a library for constructing and reading back URLs such as this within a CodeIgniter controller.
 
+WARNING
+=======
+This project has now been superseeded by the Composer based [URLopts](https://github.com/hash-bang/URLopts) package. Please update your project to use that repository instead.
+
+
 Installation
 ============
 Download this repo and copy into your application directory.
